@@ -1,0 +1,21 @@
+<!doctype html>
+  <html>
+    <head>
+      <title>Microtasking Manager</title>
+      <link rel="stylesheet" type="text/css" href="/static/theme.css">
+    </head>
+    <body>
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header pull-right" style="font-size: 24px;">
+             {% if current_user.is_authenticated %}
+             Hi {{current_user.username }}! <a href="/logout">Logout</a>
+             {% else %}
+             <a href="/login">Login</a>
+             {% endif %}
+          </div>
+        </div>
+      </nav>
+      {% block content %}{% endblock %}
+    </body>
+  </html>
