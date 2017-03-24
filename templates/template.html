@@ -5,14 +5,17 @@
       <link rel="stylesheet" type="text/css" href="/static/theme.css">
     </head>
     <body>
-      <nav class="navbar navbar-default">
+      <nav class="navbar navbar-default" style="font-size: 24px;">
         <div class="container-fluid">
-          <div class="navbar-header pull-right" style="font-size: 24px;">
-             {% if current_user.is_authenticated %}
-             Hi {{current_user.username }}! <a href="/logout">Logout</a>
-             {% else %}
-             <a href="/login">Login</a>
-             {% endif %}
+          <div class="navbar-header">
+            <a href="/">Home</a>
+          </div>
+          <div class="pull-right">
+            {% if current_user.is_authenticated %}
+            Hi {{current_user.username }}! <a href="/logout">Logout</a>
+            {% else %}
+            <a href="/login">Login</a>
+            {% endif %}
           </div>
         </div>
       </nav>
