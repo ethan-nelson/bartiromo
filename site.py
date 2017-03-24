@@ -72,7 +72,7 @@ class Vote(db.Model):
     vote = db.Column(db.Integer)
 
 
-# test_user = User(username="test", password="test", email="test")
+# test_user = User(username="admin", password="micro", email="tt@test.com")
 # db.create_all()
 # db.session.add(test_user)
 # db.session.commit()
@@ -88,6 +88,17 @@ class LoginForm(FlaskForm):
                     .query(User) \
                     .filter_by(username=self.username.data) \
                     .first()
+
+    def validate(self):
+        user = self.get_user()
+
+        if not user:
+            flash('Unsuccessful username. Try again or <a href="/register">register</a>.')
+            return False
+        if not user.password == self.password.data:
+            flash('Unsuccessful password. Try again.')
+            return False
+        return True
 
 
 class RegisterForm(FlaskForm):
@@ -113,7 +124,6 @@ def login():
                 flash('Logged in successfully.')
 
                 return redirect(url_for('home'))
-        flash('Unsuccessful. Try again or <a href="/register">register</a>.')
         return render_template('login.html', form=form)
     return render_template('login.html', form=form)
 
@@ -130,6 +140,8 @@ def register():
         db.session.commit()
 
         login_user(user)
+
+        flash('Thanks for registering!')
 
         return redirect(url_for('home'))
     return render_template('register.html', form=form)
