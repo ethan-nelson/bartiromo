@@ -41,7 +41,6 @@ class User(db.Model):
     email = db.Column(db.String(120))
     password = db.Column(db.String(64))
 
-    # Flask-Login integration
     def is_authenticated(self):
         return True
 
@@ -81,26 +80,55 @@ class LoginForm(FlaskForm):
     def get_user(self):
         return db.session.query(User).filter_by(username=self.username.data).first()
 
+class RegisterForm(FlaskForm):
+    username = TextField(u'Username', validators=[validators.input_required()])
+    password = PasswordField(u'Password', validators=[validators.input_required()])
+    email = TextField(u'Email address', validators=[validators.Email()])
+
+
 
 @app.route('/login', methods=['GET', 'POST'])
+@login_manager.unauthorized_handler
 def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = form.get_user()
-        login_user(user)
 
-        flash('Logged in successfully.')
+        if user:
+            login_user(user)
 
-        return redirect(url_for('home'))
+            if current_user.is_authenticated():
+                flash('Logged in successfully.')
+
+                return redirect(url_for('home'))
+        flash('Login unsuccessful. Try again. Are you <a href="/register">registered</a>?')
+        return render_template('login.html', form=form)
     return render_template('login.html', form=form)
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        user = User(username=form.username.data, password=form.password.data, email=form.email.data)
+
+        db.session.add(user)
+        db.session.commit()
+
+        login_user(user)
+
+        return redirect(url_for('home'))
+    return render_template('register.html', form=form)
+
+
 @app.route('/logout', methods=['GET', 'POST'])
+@login_required
 def logout():
     logout_user()
     return redirect(url_for('home'))
 
 
 @app.route('/',methods=['GET','POST'])
+@login_required
 def home():
     data = {}
     cursor = conn.cursor()
