@@ -21,7 +21,7 @@ config = {
 
 conn = sqlconn.connect(**config)
 cursor = conn.cursor()
-get_new = ("SELECT image FROM counts ORDER BY RAND() LIMIT 1;")
+get_new = ("SELECT url, id FROM image ORDER BY RAND() LIMIT 1;")
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://'+config['user']+':'+config['password']+'@'+config['host']+'/'+config['database']
 db = SQLAlchemy(app)
 
@@ -33,7 +33,6 @@ login_manager.init_app(app)
 @login_manager.user_loader
 def load_user(user_id):
     return db.session.query(User).get(user_id)
-
 
 
 class User(db.Model):
@@ -58,12 +57,22 @@ class User(db.Model):
     def __unicode__(self):
         return self.username
 
-'''
-test_user = User(username="test",password="test",email="test")
-db.create_all()
-db.session.add(test_user)
-db.session.commit()
-'''
+class Image(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    url = db.Column(db.String(120))
+
+class Vote(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    image = db.Column(db.Integer, db.ForeignKey('image.id'))
+    user = db.Column(db.Integer, db.ForeignKey('user.id'))
+    vote = db.Column(db.Integer)
+
+
+
+#test_user = User(username="test",password="test",email="test")
+#db.create_all()
+#db.session.add(test_user)
+#db.session.commit()
 
 class LoginForm(FlaskForm):
     username = TextField(u'Username', validators=[validators.input_required()])
@@ -99,20 +108,12 @@ def home():
     if request.method == 'POST':
         form = request.form
 
-        inval = [0,0,0,'']
-        if 'yes' in form:
-            inval[0] = 1
-        elif 'maybe' in form:
-            inval[1] = 1
-        elif 'no' in form:
-            inval[2] = 1
-        inval[3] = form['url']
-
-        cursor.execute('UPDATE counts SET yes = yes + %s, maybe = maybe + %s, no = no + %s WHERE counts.image = "%s";' % tuple(inval))
-        conn.commit()        
+        vote = Vote(image=form['url'],vote=form['vote'], user=current_user.id)
+        db.session.add(vote)
+        db.session.commit()
 
     cursor.execute(get_new)
-    data['url'] = cursor.fetchone()[0]
+    data['url'], data['id'] = cursor.fetchone()
 
     return render_template('index.html', data=data)
 
@@ -125,20 +126,13 @@ def select():
     if request.method == 'POST':
         form = request.form
 
-        inval = [0,0,0,'']
-        if 'yes' in form:
-            inval[0] = 1
-        elif 'maybe' in form:
-            inval[1] = 1
-        elif 'no' in form:
-            inval[2] = 1
-        inval[3] = form['url']
+        vote = Vote(image=form['url'],vote=form['vote'], user=current_user.id)
+        db.session.add(vote)
+        db.session.commit()
 
-        cursor.execute('UPDATE counts SET yes = yes + %s, maybe = maybe + %s, no = no + %s WHERE counts.image = "%s";' % tuple(inval))
-        conn.commit()        
 
     cursor.execute(get_new)
-    data['url'] = cursor.fetchone()[0]
+    data['url'], data['id'] = cursor.fetchone()[0]
 
     return render_template('selectjs.html', data=data)
 
@@ -148,7 +142,7 @@ def admin():
     data = {}
     cursor = conn.cursor()
 
-    cursor.execute('SELECT * FROM counts ORDER BY (yes+maybe+no) DESC;')
+    cursor.execute('SELECT image,vote,count(*) FROM vote group by image, vote;')
     data['data'] = cursor.fetchall()
 
     return render_template('admin.html', data=data)
