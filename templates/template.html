@@ -12,7 +12,7 @@
           </div>
           <div class="pull-right">
             {% if current_user.is_authenticated %}
-            Hi {{current_user.username }}! <a href="/logout">Logout</a>
+            Hi <a href="/user">{{current_user.username }}</a>! <a href="/logout">Logout</a>
             {% else %}
             <a href="/login">Login</a>
             {% endif %}

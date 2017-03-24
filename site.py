@@ -154,6 +154,16 @@ def logout():
     return redirect(url_for('home'))
 
 
+@app.route('/user', methods=['GET'])
+@login_required
+def user_profile():
+    cursor = conn.cursor()
+    cursor.execute('SELECT count(*) FROM vote WHERE user = %s;' % (current_user.id,))
+    data = cursor.fetchall()[0][0]
+
+    return render_template('user.html', data=data)
+
+
 @app.route('/', methods=['GET', 'POST'])
 @login_required
 def home():
