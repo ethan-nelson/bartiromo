@@ -39,6 +39,7 @@ def load_user(user_id):
 
 
 class User(db.Model):
+    __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True)
     email = db.Column(db.String(120))
@@ -68,7 +69,7 @@ class Image(db.Model):
 class Vote(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     image = db.Column(db.Integer, db.ForeignKey('image.id'))
-    user = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.Column(db.Integer, db.ForeignKey('users.id'))
     vote = db.Column(db.Integer)
 
 
@@ -167,7 +168,7 @@ def user_profile():
 @app.route('/leaderboard', methods=['GET'])
 def leaderboard():
     cursor = conn.cursor()
-    cursor.execute('SELECT user.username,count(*) FROM vote INNER JOIN user ON vote.user=user.id GROUP BY vote.user ORDER BY count(*) DESC;')
+    cursor.execute('SELECT users.username,count(*) FROM vote INNER JOIN users ON vote.user=users.id GROUP BY vote.user ORDER BY count(*) DESC;')
     data = cursor.fetchall()
     print data
     return render_template('leaderboard.html', projects=['main'], data={'main': [x for x in data]})
