@@ -106,8 +106,8 @@ class RegisterForm(FlaskForm):
                          validators=[validators.input_required()])
     password = PasswordField(u'Password',
                              validators=[validators.input_required()])
-    email = TextField(u'Email address',
-                      validators=[validators.Email()])
+    email = TextField(u'Email address')#,
+#                      validators=[validators.Email()])
 
 
 @app.route('/login', methods=['GET', 'POST'])
