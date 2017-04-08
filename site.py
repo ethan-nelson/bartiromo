@@ -6,6 +6,10 @@ from flask.ext.sqlalchemy import SQLAlchemy
 import mysql.connector as sqlconn
 from flask_wtf import FlaskForm
 from wtforms import *
+from models.users import *
+from models.base import *
+from models.vote import *
+from models.image import *
 
 app = Flask(__name__)
 
@@ -26,8 +30,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://' + \
                                         config['password'] + '@' + \
                                         config['host'] + '/' + \
                                         config['database']
-db = SQLAlchemy(app)
-
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -38,45 +40,6 @@ def load_user(user_id):
     return db.session.query(User).get(user_id)
 
 
-class User(db.Model):
-    __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True)
-    email = db.Column(db.String(120))
-    password = db.Column(db.String(64))
-
-    def is_authenticated(self):
-        return True
-
-    def is_active(self):
-        return True
-
-    def is_anonymous(self):
-        return False
-
-    def get_id(self):
-        return self.id
-
-    def __unicode__(self):
-        return self.username
-
-
-class Image(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    url = db.Column(db.String(120))
-
-
-class Vote(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    image = db.Column(db.Integer, db.ForeignKey('image.id'))
-    user = db.Column(db.Integer, db.ForeignKey('users.id'))
-    vote = db.Column(db.Integer)
-
-
-# test_user = User(username="admin", password="micro", email="tt@test.com")
-# db.create_all()
-# db.session.add(test_user)
-# db.session.commit()
 
 class LoginForm(FlaskForm):
     username = TextField(u'Username',
@@ -223,11 +186,12 @@ def admin():
 
 
 if __name__ == '__main__':
+    db.init_app(app)
     app.debug = True
     app.config['SECRET_KEY'] = 'itsatrap'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://' + \
-                                            config['user'] + ':' + \
-                                            config['password'] + '@' + \
-                                            config['host'] + '/' + \
-                                            config['database']
+    #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://' + \
+    #                                        config['user'] + ':' + \
+    #                                        config['password'] + '@' + \
+    #                                        config['host'] + '/' + \
+    #                                        config['database']
     app.run(host='0.0.0.0', port=5432)
