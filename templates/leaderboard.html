@@ -1,0 +1,19 @@
+{% extends "template.html" %}
+
+  {% block content %}
+  <div class="container-fluid">
+  <div class="row">
+  <div class="col-md-8">
+  {% for project in projects %}
+  <h3>{{ project }}</h3>
+  <table>
+  <tr><th>User</th><th>Count</th></tr>
+  {% for user in data[project] %}
+  <tr><td>{{ user[0] }}</td><td>{{ user[1] }}</td>
+  {% endfor %}
+  </table>
+  {% endfor %}
+  </div>
+  </div>
+  </div>
+  {% endblock %}

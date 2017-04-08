@@ -164,6 +164,15 @@ def user_profile():
     return render_template('user.html', data=data)
 
 
+@app.route('/leaderboard', methods=['GET'])
+def leaderboard():
+    cursor = conn.cursor()
+    cursor.execute('SELECT user.username,count(*) FROM vote INNER JOIN user ON vote.user=user.id GROUP BY vote.user ORDER BY count(*) DESC;')
+    data = cursor.fetchall()
+    print data
+    return render_template('leaderboard.html', projects=['main'], data={'main': [x for x in data]})
+
+
 @app.route('/', methods=['GET', 'POST'])
 @login_required
 def home():
