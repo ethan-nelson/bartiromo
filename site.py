@@ -71,6 +71,7 @@ class Project(db.Model):
     __tablename__ = 'projects'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
+    instruction = db.Column(db.String(400))
 
 
 class Task(db.Model):
@@ -124,7 +125,8 @@ class RegisterForm(FlaskForm):
 
 
 class CreateForm(FlaskForm):
-    name = TextField(u'First, give it a name: ')
+    name = TextField(u'Give it a name: ')
+    instruction = TextField(u'Write the instructions to show on a task: ')
 
 
 class AddForm(FlaskForm):
@@ -215,9 +217,10 @@ def project(project_id):
         db.session.add(result)
         db.session.commit()
 
+    project = Project.query.get(project_id)
     data = Task.query.filter_by(project_id=project_id).first()  # FIXME: make random
 
-    return render_template('project.html', data=data)
+    return render_template('project.html', data=data, project=project)
 
 
 @app.route('/admin/results/<int:project_id>/')
@@ -242,7 +245,7 @@ def create():
         return render_template('index.html')
     form = CreateForm()
     if request.method == 'POST':
-        project = Project(name=form.name.data)
+        project = Project(name=form.name.data, instructions=form.instructions.data)
 
         db.session.add(project)
         db.session.commit()
