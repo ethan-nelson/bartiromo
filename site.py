@@ -38,16 +38,16 @@ def load_user(user_id):
     return db.session.query(User).get(user_id)
 
 
-###############################################################################
-###   DATABASE CLASSES                                                      ###
-###############################################################################
+###########################################################################
+#   DATABASE CLASSES                                                      #
+###########################################################################
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True)
     email = db.Column(db.String(120))
     password = db.Column(db.String(64))
-    admin = db.Column(db.Boolean,default=False)
+    admin = db.Column(db.Boolean, default=False)
 
     def is_authenticated(self):
         return True
@@ -89,9 +89,9 @@ class Result(db.Model):
     result = db.Column(db.Integer)
 
 
-###############################################################################
-###   FORM CLASSES                                                          ###
-###############################################################################
+###########################################################################
+#   FORM CLASSES                                                          #
+###########################################################################
 class LoginForm(FlaskForm):
     username = TextField(u'Username',
                          validators=[validators.input_required()])
@@ -129,9 +129,9 @@ class CreateForm(FlaskForm):
     url = TextField(u'url')
 
 
-###############################################################################
-###   PAGE MODELS                                                           ###
-###############################################################################
+###########################################################################
+#   PAGE MODELS                                                           #
+###########################################################################
 @app.route('/')
 def home():
     projects = Project.query.all()
@@ -196,7 +196,9 @@ def leaderboard():
     cursor.execute('SELECT users.username,count(*) FROM results INNER JOIN users ON results.user=users.id GROUP BY results.user ORDER BY count(*) DESC;')
     data = cursor.fetchall()
     print data
-    return render_template('leaderboard.html', projects=['main'], data={'main': [x for x in data]})
+    return render_template('leaderboard.html',
+                           projects=['main'],
+                           data={'main': [x for x in data]})
 
 
 @app.route('/project/<int:project_id>/', methods=['GET', 'POST'])
@@ -208,7 +210,9 @@ def project(project_id):
     if request.method == 'POST':
         form = request.form
 
-        result = Result(task=form['url'], result=form['vote'], user=current_user.id)
+        result = Result(task=form['url'],
+                        result=form['vote'],
+                        user=current_user.id)
         db.session.add(result)
         db.session.commit()
 
@@ -275,7 +279,7 @@ def select():
 @app.route('/admin/')
 def admin():
     projects = Project.query.all()
- 
+
     return render_template('admin.html', projects=projects)
 
 
