@@ -5,7 +5,7 @@
         <tr><td>Image</td><td>Votes</td></tr>
         {% for row in data['data'] %}
             <tr>
-            <td><img width="300" src="http://imgur.com/{{row[0]}}.png"></td><td>{{row[1]}}</td>
+            <td><img width="300" src="{{row[0]}}"></td><td>{{row[1]}}</td>
             </tr>
         {% endfor %}
 
