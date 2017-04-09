@@ -9,7 +9,7 @@ config = {
 
 
 db = SQLAlchemy()
-print dir(db)
+
 engine = db.create_engine('mysql://' + \
                                         config['user'] + ':' + \
                                         config['password'] + '@' + \
