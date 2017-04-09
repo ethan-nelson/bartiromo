@@ -8,7 +8,7 @@
       <nav class="navbar navbar-default" style="font-size: 24px;">
         <div class="container-fluid">
           <div class="navbar-header">
-            <a href="/">Home</a>
+            <a href="/">Home</a>{% if project %} | {{ project['name'] }} {% endif %}
           </div>
           <div class="pull-right">
             {% if current_user.is_authenticated %}
