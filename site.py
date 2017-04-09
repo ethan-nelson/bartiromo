@@ -130,7 +130,7 @@ class CreateForm(FlaskForm):
 
 
 class AddForm(FlaskForm):
-    url = TextField(u'url')
+    url = TextAreaField(u'Paste a comma, semicolon, or line return delimited list of urls to add.')
 
 
 ###########################################################################
@@ -264,8 +264,15 @@ def add(project_id):
         return render_template('index.html')
     form = AddForm()
     if request.method == 'POST':
-        task = Task(project_id=project_id, url=form.url.data)
-        db.session.add(task)
+        data = form.url.data
+        data = data.replace(',',' ').replace(';',' ').replace('\r\n',' ').replace('\n\r',' ').replace('\n',' ').replace('\r',' ').split()
+
+        urls = db.session.query(Task.url).filter(Task.project_id==project_id).all()
+        urls = [x[0] for x in urls]
+        print urls
+        for url in data:
+            if url not in urls:
+                db.session.add(Task(project_id=project_id,url=url))
         db.session.commit()
 
         flash('Task added!')
