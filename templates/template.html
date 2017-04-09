@@ -1,7 +1,7 @@
 <!doctype html>
   <html>
     <head>
-      <title>Microtasking Manager</title>
+      <title>Crowdsourcing Tool</title>
       <link rel="stylesheet" type="text/css" href="/static/theme.css">
     </head>
     <body>
@@ -26,6 +26,8 @@
           {% endfor %} 
         {% endif %}
       {% endwith%}
+      <div class="body">
       {% block content %}{% endblock %}
+      </div>
     </body>
   </html>

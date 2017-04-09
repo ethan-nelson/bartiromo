@@ -124,7 +124,7 @@ class RegisterForm(FlaskForm):
 
 
 class CreateForm(FlaskForm):
-    name = TextField(u'Name')
+    name = TextField(u'First, give it a name: ')
 
 
 class AddForm(FlaskForm):
@@ -187,9 +187,9 @@ def logout():
 @app.route('/user/', methods=['GET'])
 @login_required
 def user_profile():
-    data = Result.query.filter(Result.user == current_user.id).count()
+    score = Result.query.filter(Result.user == current_user.id).count()
 
-    return render_template('user.html', data=data)
+    return render_template('user.html', score=score)
 
 
 @app.route('/leaderboard/', methods=['GET'])

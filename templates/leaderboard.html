@@ -1,18 +1,28 @@
 {% extends "template.html" %}
 
   {% block content %}
+  <style>
+    tr, td, th {
+      padding: 0px 5px 0px 5px;
+    }
+  </style>
   <div class="container-fluid">
   <div class="row">
+  <div class="col-md-2">
+  </div>
   <div class="col-md-8">
+  <center>
+  <h2>Current Leaderboard</h2>
   {% for project in projects %}
-  <h3>{{ project }}</h3>
-  <table>
-  <tr><th>User</th><th>Count</th></tr>
+  <h3>Project {{ project }}</h3>
+  <table style="font-size: 20px;">
+  <tr><th><u>User</u></th><th><u>Count</u></th></tr>
   {% for user in data[project] %}
   <tr><td>{{ user[0] }}</td><td>{{ user[1] }}</td>
   {% endfor %}
   </table>
   {% endfor %}
+  </center>
   </div>
   </div>
   </div>

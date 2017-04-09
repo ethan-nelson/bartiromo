@@ -3,6 +3,7 @@
 {% block content %}
 <form method="POST" action="/login/">
     <center>
+    <b>Login</b><br />
     {{ form.csrf_token }}
     {{ form.username.label }} {{ form.username(size=20) }}
     {{ form.password.label}} {{form.password(size=20) }}
