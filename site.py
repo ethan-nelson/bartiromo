@@ -20,7 +20,6 @@ config = {
 
 conn = sqlconn.connect(**config)
 cursor = conn.cursor()
-get_new = ("SELECT url, id FROM tasks ORDER BY RAND() LIMIT 1;")
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://' + \
                                         config['user'] + ':' + \
                                         config['password'] + '@' + \
@@ -207,9 +206,6 @@ def leaderboard():
 @app.route('/project/<int:project_id>/', methods=['GET', 'POST'])
 @login_required
 def project(project_id):
-    data = {}
-    cursor = conn.cursor()
-
     if request.method == 'POST':
         form = request.form
 
@@ -219,8 +215,7 @@ def project(project_id):
         db.session.add(result)
         db.session.commit()
 
-    cursor.execute(get_new)
-    data['url'], data['id'] = cursor.fetchone()
+    data = Task.query.filter_by(project_id=project_id).first()  # FIXME: make random
 
     return render_template('project.html', data=data)
 
