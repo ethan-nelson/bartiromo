@@ -127,6 +127,8 @@ class RegisterForm(FlaskForm):
 class CreateForm(FlaskForm):
     name = TextField(u'Name')
     url = TextField(u'url')
+
+
 ###############################################################################
 ###   PAGE MODELS                                                           ###
 ###############################################################################
@@ -183,9 +185,7 @@ def logout():
 @app.route('/user', methods=['GET'])
 @login_required
 def user_profile():
-    cursor = conn.cursor()
-    cursor.execute('SELECT count(*) FROM results WHERE user = %s;' % (current_user.id,))
-    data = cursor.fetchall()[0][0]
+    data = Result.query.filter(Result.user == current_user.id).count()
 
     return render_template('user.html', data=data)
 
