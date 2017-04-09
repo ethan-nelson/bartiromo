@@ -20,7 +20,7 @@ config = {
 
 conn = sqlconn.connect(**config)
 cursor = conn.cursor()
-get_new = ("SELECT url, id FROM image ORDER BY RAND() LIMIT 1;")
+get_new = ("SELECT url, id FROM tasks ORDER BY RAND() LIMIT 1;")
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://' + \
                                         config['user'] + ':' + \
                                         config['password'] + '@' + \
@@ -38,12 +38,16 @@ def load_user(user_id):
     return db.session.query(User).get(user_id)
 
 
+###############################################################################
+###   DATABASE CLASSES                                                      ###
+###############################################################################
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True)
     email = db.Column(db.String(120))
     password = db.Column(db.String(64))
+    admin = db.Column(db.Boolean)
 
     def is_authenticated(self):
         return True
@@ -54,6 +58,9 @@ class User(db.Model):
     def is_anonymous(self):
         return False
 
+    def is_admin(self):
+        return admin
+
     def get_id(self):
         return self.id
 
@@ -61,23 +68,30 @@ class User(db.Model):
         return self.username
 
 
-class Image(db.Model):
+class Project(db.Model):
+    __tablename__ = 'projects'
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+
+
+class Task(db.Model):
+    __tablename__ = 'tasks'
+    id = db.Column(db.Integer, primary_key=True)
+    project_id = db.Column(db.Integer, db.ForeignKey('projects.id'))
     url = db.Column(db.String(120))
 
 
-class Vote(db.Model):
+class Result(db.Model):
+    __tablename__ = 'results'
     id = db.Column(db.Integer, primary_key=True)
-    image = db.Column(db.Integer, db.ForeignKey('image.id'))
+    task = db.Column(db.Integer, db.ForeignKey('tasks.id'))
     user = db.Column(db.Integer, db.ForeignKey('users.id'))
-    vote = db.Column(db.Integer)
+    result = db.Column(db.Integer)
 
 
-# test_user = User(username="admin", password="micro", email="tt@test.com")
-# db.create_all()
-# db.session.add(test_user)
-# db.session.commit()
-
+###############################################################################
+###   FORM CLASSES                                                          ###
+###############################################################################
 class LoginForm(FlaskForm):
     username = TextField(u'Username',
                          validators=[validators.input_required()])
@@ -109,6 +123,15 @@ class RegisterForm(FlaskForm):
                              validators=[validators.input_required()])
     email = TextField(u'Email address')#,
 #                      validators=[validators.Email()])
+
+
+###############################################################################
+###   PAGE MODELS                                                           ###
+###############################################################################
+@app.route('/')
+def home():
+    projects = Project.query.all()
+    return render_template('index.html', projects=projects)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -159,7 +182,7 @@ def logout():
 @login_required
 def user_profile():
     cursor = conn.cursor()
-    cursor.execute('SELECT count(*) FROM vote WHERE user = %s;' % (current_user.id,))
+    cursor.execute('SELECT count(*) FROM results WHERE user = %s;' % (current_user.id,))
     data = cursor.fetchall()[0][0]
 
     return render_template('user.html', data=data)
@@ -174,23 +197,23 @@ def leaderboard():
     return render_template('leaderboard.html', projects=['main'], data={'main': [x for x in data]})
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/project/<int:project_id>', methods=['GET', 'POST'])
 @login_required
-def home():
+def project(project_id):
     data = {}
     cursor = conn.cursor()
 
     if request.method == 'POST':
         form = request.form
 
-        vote = Vote(image=form['url'], vote=form['vote'], user=current_user.id)
-        db.session.add(vote)
+        result = Result(task=form['url'], result=form['vote'], user=current_user.id)
+        db.session.add(result)
         db.session.commit()
 
     cursor.execute(get_new)
     data['url'], data['id'] = cursor.fetchone()
 
-    return render_template('index.html', data=data)
+    return render_template('project.html', data=data)
 
 
 @app.route('/select', methods=['GET', 'POST'])
@@ -201,7 +224,7 @@ def select():
     if request.method == 'POST':
         form = request.form
 
-        vote = Vote(image=form['url'], vote=form['vote'], user=current_user.id)
+        vote = Vote(url=form['url'], vote=form['vote'], user=current_user.id)
         db.session.add(vote)
         db.session.commit()
 

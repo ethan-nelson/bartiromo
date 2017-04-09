@@ -1,0 +1,23 @@
+{% extends "template.html" %}
+
+  {% block content %}
+    <form method="POST" url="/">
+    <div class="container-fluid">
+    <div class="row">
+    <div class="col-md-8">
+    <center><img width="500px" src="http://imgur.com/{{data['url']}}.png" /></center>
+    </div>
+<!--      <map>
+        set out a map for each coordinate area. when selected, it will activate a javascript event that takes the coordinates and adds it to the list. the list can show up in a text box on the right side and also as a json.
+      </map> -->
+    <div class="col-md-4">
+    <p>
+    <input type="hidden" value="{{data['id']}}" name="url"></input>
+    <p>Is there ice?</p>
+    <p><button type="submit" class="btn btn-success btn-lg" value="1" name="vote">Yes</button></p>
+    <p><button type="submit" class="btn btn-warning btn-lg" value="2" name="vote">Maybe</button></p>
+    <p><button type="submit" class="btn btn-danger btn-lg" value="3" name="vote">No</button></p>
+    </div>
+    </div>
+    </form>
+  {% endblock %}
