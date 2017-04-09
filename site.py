@@ -193,7 +193,7 @@ def user_profile():
 @app.route('/leaderboard/', methods=['GET'])
 def leaderboard():
     cursor = conn.cursor()
-    cursor.execute('SELECT users.username,count(*) FROM vote INNER JOIN users ON vote.user=users.id GROUP BY vote.user ORDER BY count(*) DESC;')
+    cursor.execute('SELECT users.username,count(*) FROM results INNER JOIN users ON results.user=users.id GROUP BY results.user ORDER BY count(*) DESC;')
     data = cursor.fetchall()
     print data
     return render_template('leaderboard.html', projects=['main'], data={'main': [x for x in data]})
