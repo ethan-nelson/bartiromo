@@ -1,7 +1,7 @@
 {% extends "template.html" %}
 
 {% block content %}
-<form method="POST" action="/login">
+<form method="POST" action="/login/">
     <center>
     {{ form.csrf_token }}
     {{ form.username.label }} {{ form.username(size=20) }}

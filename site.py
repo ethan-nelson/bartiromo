@@ -138,7 +138,7 @@ def home():
     return render_template('index.html', projects=projects)
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login/', methods=['GET', 'POST'])
 @login_manager.unauthorized_handler
 def login():
     form = LoginForm()
@@ -156,7 +156,7 @@ def login():
     return render_template('login.html', form=form)
 
 
-@app.route('/register', methods=['GET', 'POST'])
+@app.route('/register/', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
@@ -175,14 +175,14 @@ def register():
     return render_template('register.html', form=form)
 
 
-@app.route('/logout', methods=['GET', 'POST'])
+@app.route('/logout/', methods=['GET', 'POST'])
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('home'))
 
 
-@app.route('/user', methods=['GET'])
+@app.route('/user/', methods=['GET'])
 @login_required
 def user_profile():
     data = Result.query.filter(Result.user == current_user.id).count()
@@ -190,7 +190,7 @@ def user_profile():
     return render_template('user.html', data=data)
 
 
-@app.route('/leaderboard', methods=['GET'])
+@app.route('/leaderboard/', methods=['GET'])
 def leaderboard():
     cursor = conn.cursor()
     cursor.execute('SELECT users.username,count(*) FROM vote INNER JOIN users ON vote.user=users.id GROUP BY vote.user ORDER BY count(*) DESC;')
@@ -199,7 +199,7 @@ def leaderboard():
     return render_template('leaderboard.html', projects=['main'], data={'main': [x for x in data]})
 
 
-@app.route('/project/<int:project_id>', methods=['GET', 'POST'])
+@app.route('/project/<int:project_id>/', methods=['GET', 'POST'])
 @login_required
 def project(project_id):
     data = {}
@@ -218,7 +218,7 @@ def project(project_id):
     return render_template('project.html', data=data)
 
 
-@app.route('/admin/results/<int:project_id>')
+@app.route('/admin/results/<int:project_id>/')
 @login_required
 def results(project_id):
     if not current_user.admin:
@@ -272,7 +272,7 @@ def select():
     return render_template('selectjs.html', data=data)
 
 
-@app.route('/admin')
+@app.route('/admin/')
 def admin():
     projects = Project.query.all()
  

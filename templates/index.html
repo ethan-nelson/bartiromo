@@ -6,12 +6,12 @@
     <div class="col-md-8">
     <p>Welcome to this crowdsourcing tool!</p>
     {% if current_user.admin %}
-    <p><a href="/admin">Click here</a> to go to the admin site.</p>
+    <p><a href="/admin/">Click here</a> to go to the admin site.</p>
     {% endif %}
     <h3>Projects available to work on:</h3>
     <ul>
     {% for project in projects: %}
-    <li><a href="/project/{{ project.id }}">{{ project.name }}</a></li>
+    <li><a href="/project/{{ project.id }}/">{{ project.name }}</a></li>
     {% endfor %}
     </ul>
     </div>
