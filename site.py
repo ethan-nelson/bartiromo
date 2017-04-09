@@ -126,6 +126,9 @@ class RegisterForm(FlaskForm):
 
 class CreateForm(FlaskForm):
     name = TextField(u'Name')
+
+
+class AddForm(FlaskForm):
     url = TextField(u'url')
 
 
@@ -248,14 +251,29 @@ def create():
 
         db.session.add(project)
         db.session.commit()
-        task = Task(project_id=project.id, url=form.url.data)
-        db.session.add(task)
-        db.session.commit()
 
         flash('Project created!')
 
-        return redirect(url_for('admin'))
+        return redirect('/admin/add/%i/' % (project.id,))
     return render_template('create.html', form=form)
+
+
+@app.route('/admin/add/<int:project_id>/', methods=['GET', 'POST'])
+@login_required
+def add(project_id):
+    if not current_user.admin:
+        flash('Sorry, you do not have permission to do that.')
+        return render_template('index.html')
+    form = AddForm()
+    if request.method == 'POST':
+        task = Task(project_id=project_id, url=form.url.data)
+        db.session.add(task)
+        db.session.commit()
+
+        flash('Task added!')
+
+        return redirect(url_for('admin'))
+    return render_template('add.html', form=form, project_id=project_id)
 
 
 @app.route('/select', methods=['GET', 'POST'])
