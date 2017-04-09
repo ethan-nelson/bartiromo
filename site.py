@@ -59,7 +59,7 @@ class User(db.Model):
         return False
 
     def is_admin(self):
-        return admin
+        return self.admin
 
     def get_id(self):
         return self.id
