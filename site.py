@@ -221,8 +221,9 @@ def project(project_id):
 @app.route('/admin/results/<int:project_id>')
 @login_required
 def results(project_id):
-    if not current_user.is_admin:
-        return login_manager.unauthorized()
+    if not current_user.admin:
+        flash('Sorry, you do not have permission to do that.')
+        return render_template('index.html')
     data = {}
     cursor = conn.cursor()
     cursor.execute('SELECT tasks.url,count(*) FROM results INNER JOIN tasks WHERE tasks.project_id=%s GROUP BY results.task;' % (project_id,))
@@ -234,8 +235,9 @@ def results(project_id):
 @app.route('/admin/create/', methods=['GET', 'POST'])
 @login_required
 def create():
-    if not current_user.is_admin:
-        return login_manager.unauthorized()
+    if not current_user.admin:
+        flash('Sorry, you do not have permission to do that.')
+        return render_template('index.html')
     form = CreateForm()
     if request.method == 'POST':
         project = Project(name=form.name.data)
