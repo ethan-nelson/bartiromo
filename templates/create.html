@@ -1,0 +1,11 @@
+{% extends "template.html" %}
+
+{% block content %}
+<form method="POST" action="/admin/create/">
+    <center>
+    {{ form.name.label }} {{ form.name(size=30) }}
+    {{ form.url.label}} {{ form.url(size=30) }}
+    <input type="submit" value="Create">
+    </center>
+</form>
+{% endblock %} 

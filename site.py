@@ -121,10 +121,12 @@ class RegisterForm(FlaskForm):
                          validators=[validators.input_required()])
     password = PasswordField(u'Password',
                              validators=[validators.input_required()])
-    email = TextField(u'Email address')#,
-#                      validators=[validators.Email()])
+    email = TextField(u'Email address')
 
 
+class CreateForm(FlaskForm):
+    name = TextField(u'Name')
+    url = TextField(u'url')
 ###############################################################################
 ###   PAGE MODELS                                                           ###
 ###############################################################################
@@ -216,6 +218,40 @@ def project(project_id):
     return render_template('project.html', data=data)
 
 
+@app.route('/admin/results/<int:project_id>')
+@login_required
+def results(project_id):
+    if not current_user.is_admin:
+        return login_manager.unauthorized()
+    data = {}
+    cursor = conn.cursor()
+    cursor.execute('SELECT tasks.url,count(*) FROM results INNER JOIN tasks WHERE tasks.project_id=%s GROUP BY results.task;' % (project_id,))
+    data['data'] = cursor.fetchall()
+    print data
+    return render_template('results.html', data=data)
+
+
+@app.route('/admin/create/', methods=['GET', 'POST'])
+@login_required
+def create():
+    if not current_user.is_admin:
+        return login_manager.unauthorized()
+    form = CreateForm()
+    if request.method == 'POST':
+        project = Project(name=form.name.data)
+
+        db.session.add(project)
+        db.session.commit()
+        task = Task(project_id=project.id, url=form.url.data)
+        db.session.add(task)
+        db.session.commit()
+
+        flash('Project created!')
+
+        return redirect(url_for('admin'))
+    return render_template('create.html', form=form)
+
+
 @app.route('/select', methods=['GET', 'POST'])
 def select():
     data = {}
@@ -236,13 +272,9 @@ def select():
 
 @app.route('/admin')
 def admin():
-    data = {}
-    cursor = conn.cursor()
-
-    cursor.execute('SELECT image,vote,count(*) FROM vote group by image,vote;')
-    data['data'] = cursor.fetchall()
-
-    return render_template('admin.html', data=data)
+    projects = Project.query.all()
+ 
+    return render_template('admin.html', projects=projects)
 
 
 if __name__ == '__main__':

@@ -1,0 +1,14 @@
+{% extends "template.html" %}
+    {% block content %}
+
+    <table><td>
+        <tr><td>Image</td><td>Votes</td></tr>
+        {% for row in data['data'] %}
+            <tr>
+            <td><img width="300" src="http://imgur.com/{{row[0]}}.png"></td><td>{{row[1]}}</td>
+            </tr>
+        {% endfor %}
+
+    </td></table>
+
+    {% endblock %}
