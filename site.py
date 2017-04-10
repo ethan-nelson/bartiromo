@@ -183,6 +183,7 @@ def register():
 @login_required
 def logout():
     logout_user()
+    flash('Logged out!')
     return redirect(url_for('home'))
 
 
@@ -275,7 +276,12 @@ def add(project_id):
                 db.session.add(Task(project_id=project_id,url=url))
         db.session.commit()
 
-        flash('Task added!')
+        if len(data) == 0:
+            flash('No tasks added.')
+        elif len(data) == 1:
+            flash('Task added!')
+        else:
+            flash('Tasks added!')
 
         return redirect(url_for('admin'))
     return render_template('add.html', form=form, project_id=project_id)
