@@ -79,7 +79,8 @@ class Project(db.Model):
     __tablename__ = 'projects'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
-    instruction = db.Column(db.String(400))
+    instruction = db.Column(db.Text(400))
+    description = db.Column(db.Text(1000))
 
 
 class Task(db.Model):
