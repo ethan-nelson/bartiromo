@@ -287,24 +287,6 @@ def add(project_id):
     return render_template('add.html', form=form, project_id=project_id)
 
 
-@app.route('/select', methods=['GET', 'POST'])
-def select():
-    data = {}
-    cursor = conn.cursor()
-
-    if request.method == 'POST':
-        form = request.form
-
-        vote = Vote(url=form['url'], vote=form['vote'], user=current_user.id)
-        db.session.add(vote)
-        db.session.commit()
-
-    cursor.execute(get_new)
-    data['url'], data['id'] = cursor.fetchone()[0]
-
-    return render_template('selectjs.html', data=data)
-
-
 @app.route('/admin/')
 def admin():
     projects = Project.query.all()
