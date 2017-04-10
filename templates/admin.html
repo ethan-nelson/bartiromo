@@ -7,12 +7,16 @@
     </div>
     <div class="col-md-8">
     <p><a href="/admin/create/">Create a new project</a></p>
+    {% if (projects | length) != 0 %}
     <h3>Current Projects:</h3>
     <ul>
     {% for project in projects: %}
     <li><a href="/admin/results/{{ project.id }}/">{{ project.name }}</a> | <a href="/admin/add/{{ project.id }}/">Add another image</a></li>
     {% endfor %}
     </ul>
+    {% else %}
+    <p>There are currently no projects available. Try making one above.</p>
+    {% endif %}
     </div>
     </div>
     </div>

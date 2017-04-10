@@ -10,12 +10,16 @@
     {% if current_user.admin %}
     <p><a href="/admin/">Click here</a> to go to the admin site.</p>
     {% endif %}
+    {% if (projects | length) != 0 %}
     <h3>Projects available to work on:</h3>
     <ul>
     {% for project in projects: %}
     <li><a href="/project/{{ project.id }}/">{{ project.name }}</a></li>
     {% endfor %}
     </ul>
+    {% else %}
+    <p>Currently there are no projects available.</p>
+    {% endif %}
     </div>
     </div>
     </div>
