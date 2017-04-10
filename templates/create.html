@@ -4,7 +4,8 @@
 <form method="POST" action="/admin/create/">
     <center>
     <b>Create a new project</b><br />
-    {{ form.name.label }} {{ form.name(size=30) }}
+    {{ form.name.label }} {{ form.name(size=30) }}<br />
+    {{ form.instruction.label }} {{ form.instruction(size=100) }}<br />
     <input type="submit" value="Initialize project">
     </center>
 </form>

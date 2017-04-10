@@ -245,7 +245,7 @@ def create():
         return render_template('index.html')
     form = CreateForm()
     if request.method == 'POST':
-        project = Project(name=form.name.data, instructions=form.instructions.data)
+        project = Project(name=form.name.data, instruction=form.instruction.data)
 
         db.session.add(project)
         db.session.commit()
