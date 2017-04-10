@@ -228,7 +228,7 @@ def project(project_id):
         db.session.commit()
 
     project = Project.query.get(project_id)
-    data = Task.query.filter_by(project_id=project_id).first()  # FIXME: make random
+    data = Task.query.filter_by(project_id=project_id).order_by(db.func.random()).first()
 
     return render_template('project.html', data=data, project=project)
 
