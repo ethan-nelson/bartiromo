@@ -11,6 +11,7 @@
             <a href="/">Home</a>{% if project %} | {{ project['name'] }} {% endif %}
           </div>
           <div class="pull-right">
+            <a href="/leaderboard/">Leaderboard</a> | 
             {% if current_user.is_authenticated %}
             Hi <a href="/user/">{{current_user.username }}</a>! <a href="/logout/">Logout</a>
             {% else %}
