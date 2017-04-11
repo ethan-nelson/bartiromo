@@ -6,6 +6,13 @@ from flask_wtf import FlaskForm
 from wtforms import *
 import os
 
+# Layout:
+# - Flask guts
+# - Database guts
+# - Login guts
+# - Database definitions
+# - Form definitions
+# - App views
 
 ###########################################################################
 #   APP HANDLER                                                           #
