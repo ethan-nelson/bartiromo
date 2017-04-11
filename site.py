@@ -6,29 +6,17 @@ from flask.ext.sqlalchemy import SQLAlchemy
 import mysql.connector as sqlconn
 from flask_wtf import FlaskForm
 from wtforms import *
-
-
-config = {
-  'user': 'micro',
-  'password': 'micro',
-  'host': 'localhost',
-  'database': 'micro',
-}
-
-
-conn = sqlconn.connect(**config)
-cursor = conn.cursor()
+import os
 
 
 ###########################################################################
 #   APP HANDLER                                                           #
 ###########################################################################
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://' + \
-                                        config['user'] + ':' + \
-                                        config['password'] + '@' + \
-                                        config['host'] + '/' + \
-                                        config['database']
+try:
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+except:
+    raise Exception('Server settings not set in environmental variable `DATABASE`.')
 
 
 ###########################################################################
@@ -230,10 +218,11 @@ def user_profile():
 
 @app.route('/leaderboard/', methods=['GET'])
 def leaderboard():
-    cursor = conn.cursor()
-    cursor.execute('SELECT users.username,count(*) FROM results INNER JOIN users ON results.user=users.id GROUP BY results.user ORDER BY count(*) DESC;')
-    data = cursor.fetchall()
-    print data
+    data = db.session.query(User.username, db.func.count()) \
+                     .join(Result, Result.user==User.id) \
+                     .group_by(Result.user) \
+                     .order_by(db.func.count().desc()).all()
+
     return render_template('leaderboard.html',
                            projects=['main'],
                            data={'main': [x for x in data]})
@@ -264,10 +253,7 @@ def results(project_id):
         flash('Sorry, you do not have permission to do that.')
         return render_template('index.html')
     data = {}
-    cursor = conn.cursor()
-    cursor.execute('SELECT tasks.url,count(*) FROM results INNER JOIN tasks WHERE tasks.project_id=%s GROUP BY results.task;' % (project_id,))
-    data['data'] = cursor.fetchall()
-    print data
+    data['data'] = db.session.query(Task.url, db.func.count(Result.id)).join(Result,Task.project_id==project_id).group_by(Result.task).all()
     return render_template('results.html', data=data)
 
 
@@ -343,9 +329,4 @@ def admin():
 if __name__ == '__main__':
     app.debug = True
     app.config['SECRET_KEY'] = 'itsatrap'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://' + \
-                                            config['user'] + ':' + \
-                                            config['password'] + '@' + \
-                                            config['host'] + '/' + \
-                                            config['database']
     app.run(host='0.0.0.0', port=5432)
