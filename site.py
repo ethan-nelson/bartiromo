@@ -1,4 +1,3 @@
-#!/home/enelson/flaskenv/bin/python
 from flask import Flask
 from flask import *
 from flask.ext.login import *
