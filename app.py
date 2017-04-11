@@ -78,8 +78,8 @@ class Project(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
     instruction = db.Column(db.String(200))
-    description = db.Column(db.Text)
-    hidden = db.Column(db.Boolean)
+    description = db.Column(db.Text,default='')
+    hidden = db.Column(db.Boolean,default=False)
 
 
 class Task(db.Model):
@@ -271,7 +271,7 @@ def create():
         return render_template('index.html')
     form = CreateForm()
     if form.validate_on_submit():
-        project = Project(name=form.name.data, instruction=form.instruction.data)
+        project = Project(name=form.name.data, instruction=form.instruction.data, description=form.instruction.description)
 
         db.session.add(project)
         db.session.commit()
