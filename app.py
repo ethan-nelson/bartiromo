@@ -326,6 +326,13 @@ def admin():
     return render_template('admin.html', projects=projects)
 
 
+def create_database():
+    db.create_all()
+    admin = User(username="admin",password="micro",admin=True)
+    db.session.add(admin)
+    db.session.commit()
+
+
 if __name__ == '__main__':
     app.config['SECRET_KEY'] = 'itsatrap'
     app.run(host='0.0.0.0', port=5432)
