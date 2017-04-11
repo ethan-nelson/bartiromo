@@ -152,6 +152,11 @@ class RegisterForm(FlaskForm):
         return True
 
 
+class PasswordForm(FlaskForm):
+    password = PasswordField(u'New password',
+                             validators=[validators.input_required()])
+
+
 class CreateForm(FlaskForm):
     name = TextField(u'Give it a name: ',
                      validators=[validators.input_required()])
@@ -234,11 +239,25 @@ def user_profile():
     return render_template('user.html', score=score)
 
 
+@app.route('/user/password/', methods=['GET', 'POST'])
+@login_required
+def user_password():
+    form = PasswordForm()
+    if request.method == 'POST':
+        user = User.query.get(current_user.id)
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+
+        return redirect(url_for('user_profile'))
+    return render_template('password.html', form=form)
+
+
 @app.route('/leaderboard/', methods=['GET'])
 def leaderboard():
     data = db.session.query(User.username, db.func.count()) \
                      .join(Result, Result.user==User.id) \
-                     .group_by(Result.user) \
+                     .group_by(User.username) \
                      .order_by(db.func.count().desc()).all()
 
     return render_template('leaderboard.html',
@@ -271,7 +290,7 @@ def results(project_id):
         flash('Sorry, you do not have permission to do that.')
         return render_template('index.html')
     data = {}
-    data['data'] = db.session.query(Task.url, db.func.count(Result.id)).join(Result,Task.project_id==project_id).group_by(Result.task).all()
+    data['data'] = db.session.query(Task.url, db.func.count(Result.id)).join(Result,Task.project_id==project_id).group_by(Task.url).all()
     return render_template('results.html', data=data)
 
 
@@ -283,7 +302,7 @@ def create():
         return render_template('index.html')
     form = CreateForm()
     if form.validate_on_submit():
-        project = Project(name=form.name.data, instruction=form.instruction.data, description=form.instruction.description)
+        project = Project(name=form.name.data, instruction=form.instruction.data, description=form.description.data)
 
         db.session.add(project)
         db.session.commit()
@@ -307,7 +326,6 @@ def add(project_id):
 
         urls = db.session.query(Task.url).filter(Task.project_id==project_id).all()
         urls = [x[0] for x in urls]
-        print urls
         for url in data:
             if url not in urls:
                 db.session.add(Task(project_id=project_id,url=url))
