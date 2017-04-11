@@ -19,6 +19,7 @@ config = {
 conn = sqlconn.connect(**config)
 cursor = conn.cursor()
 
+
 ###########################################################################
 #   APP HANDLER                                                           #
 ###########################################################################
@@ -134,6 +135,14 @@ class RegisterForm(FlaskForm):
     password = PasswordField(u'Password',
                              validators=[validators.input_required()])
     email = TextField(u'Email address')
+
+    def validate(self):
+        user = User.query.filter_by(username=self.username.data).count()
+
+        if user != 0:
+            flash('That name is already registered. Try a new one.')
+            return False
+        return True
 
 
 class CreateForm(FlaskForm):
