@@ -23,7 +23,7 @@ try:
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
     app.config['SECRET_KEY'] = 'itsatrap'
 except:
-    raise Exception('Server settings not set in environmental variable `DATABASE`.')
+    raise Exception('Server settings not set in environmental variable `DATABASE_URL`.')
 
 
 ###########################################################################
