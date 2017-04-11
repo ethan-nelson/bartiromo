@@ -2,7 +2,6 @@ from flask import Flask
 from flask import *
 from flask.ext.login import *
 from flask.ext.sqlalchemy import SQLAlchemy
-import mysql.connector as sqlconn
 from flask_wtf import FlaskForm
 from wtforms import *
 import os
