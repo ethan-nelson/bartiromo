@@ -11,7 +11,7 @@
     <h3>Current Projects:</h3>
     <ul>
     {% for project in projects: %}
-    <li><a href="/admin/results/{{ project.id }}/">{{ project.name }}</a> | <a href="/admin/add/{{ project.id }}/">Add another image</a></li>
+    <li><a href="/admin/results/{{ project.id }}/">{{ project.name }}</a> | <a href="/admin/add/{{ project.id }}/">Add images</a></li>
     {% endfor %}
     </ul>
     {% else %}

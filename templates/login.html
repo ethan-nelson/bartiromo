@@ -5,8 +5,8 @@
     <center>
     <b>Login</b><br />
     {{ form.csrf_token }}
-    {{ form.username.label }} {{ form.username(size=20) }}
-    {{ form.password.label}} {{form.password(size=20) }}
+    <b>{{ form.username.label }}</b> {{ form.username(size=20) }}<br />
+    <b>{{ form.password.label }}</b> {{form.password(size=20) }}<br />
     <input type="submit" value="Login">
     </center>
 </form>
