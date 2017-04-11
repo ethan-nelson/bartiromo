@@ -7,8 +7,6 @@ import mysql.connector as sqlconn
 from flask_wtf import FlaskForm
 from wtforms import *
 
-app = Flask(__name__)
-
 
 config = {
   'user': 'micro',
@@ -20,6 +18,11 @@ config = {
 
 conn = sqlconn.connect(**config)
 cursor = conn.cursor()
+
+###########################################################################
+#   APP HANDLER                                                           #
+###########################################################################
+app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://' + \
                                         config['user'] + ':' + \
                                         config['password'] + '@' + \
