@@ -146,8 +146,11 @@ class RegisterForm(FlaskForm):
 
 
 class CreateForm(FlaskForm):
-    name = TextField(u'Give it a name: ')
-    instruction = TextField(u'Write the instructions to show on a task: ')
+    name = TextField(u'Give it a name: ',
+                     validators=[validators.input_required()])
+    instruction = TextField(u'Write the instructions to show on a task: ',
+                            validators=[validators.input_required()])
+    description = TextField(u'Write the description to show on the homepage: ')
 
     def validate(self):
         project = Project.query.filter_by(name=self.name.data).count()
