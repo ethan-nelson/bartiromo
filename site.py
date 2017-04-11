@@ -149,6 +149,14 @@ class CreateForm(FlaskForm):
     name = TextField(u'Give it a name: ')
     instruction = TextField(u'Write the instructions to show on a task: ')
 
+    def validate(self):
+        project = Project.query.filter_by(name=self.name.data).count()
+
+        if project != 0:
+            flash('That project name already exists. Try a new one.')
+            return False
+        return True
+
 
 class AddForm(FlaskForm):
     url = TextAreaField(u'Paste a comma, semicolon, or line return delimited list of urls to add.')
@@ -266,7 +274,7 @@ def create():
         flash('Sorry, you do not have permission to do that.')
         return render_template('index.html')
     form = CreateForm()
-    if request.method == 'POST':
+    if form.validate_on_submit():
         project = Project(name=form.name.data, instruction=form.instruction.data)
 
         db.session.add(project)
