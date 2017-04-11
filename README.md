@@ -33,6 +33,21 @@ Database connection information is accessed via the environmental variable `DATA
 $ export DATABASE_URL="mysql://user:pass@host/db"
 ~~~
 
+Running the Application
+=======================
+
+With the Python modules and database configured, you are now ready to run the application.
+
+The simplest way to run the app is to leverage Flask's internal web server, Werkzeug, using the python environment you installed:
+
+~~~
+$ env/bin/python app.py
+~~~
+
+By default, the app is served on 0.0.0.0:5432 using this mechanism, but that can be altered on the last line of the `app.py` file.
+
+For deploying to Heroku, a PaaS, a Procfile is included in the repository that uses gunicorn to serve the website.
+
 Data Structure
 ==============
 
