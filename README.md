@@ -39,6 +39,27 @@ Database connection information is accessed via the environmental variable `DATA
 $ export DATABASE_URL="mysql://user:pass@host/db"
 ~~~
 
+### Database Schema
+
+Tables and default user credentials must also be created for the app to run. Included in `app.py` is a function that will generate the tables and create a default user of name `admin` and password `micro`. This is called by:
+
+~~~
+$ env/bin/python -c "import app; app.create_all()"
+~~~
+
+*Make sure you log in to the app and change the admin credentials.*
+
+Alternatively, you can call the individual functions yourself in case you want to delete existing tables or populate the tables with your own set of users. These capabilities are accessible by:
+
+~~~
+$ env/bin/python
+>>> import app
+>>> app.db.drop_all()    # To delete existing tables in the database
+>>> app.db.create_all()  # To add the required tables and columns
+~~~
+
+and so on. The namespace `app.db` provides you access to [Flask SQLAlchemy](http://flask-sqlalchemy.pocoo.org/) functions. See the `create_database()` function in `app.py` for an example of adding a user to the database programmatically.
+
 ## Running the Application
 
 With the Python modules and database configured, you are now ready to run the application.
@@ -58,3 +79,18 @@ For deploying to Heroku, a PaaS, a Procfile is included in the repository that u
 * Projects are created with a given goal. Projects have a name, a description visible on the home page, and instructions displayed on the task page.
 * Tasks are individual components of a project that are to be classified. In the case of image identification, a task is a single image.
 * Results are user-chosen entries for a given task. In the case of image identification, a result would be "yes" in response to the instructions for a given project.
+
+## URL Paths
+
+* `/` will lead to the homepage of the project.
+* `/login/`, `/logout/`, and `/register/` provide their respectively-named functions.
+* `/user/` accesses the logged in user's profile and includes a link to the password change page at `/user/password/`.
+* `/leaderboard/` provides an overview of user contributions to all projects.
+* `/project/<integer>/` will provide a task from the respective project.
+* `/admin/` is the administrative interface homepage, providing links to project creation, project results, task addition pages, and options to hide projects.
+
+## Feedback and Forthcoming Improvements
+
+There's a lot on the docket still to be added to this. First in line are the inclusion of tutorials for projects, customizable image sizes, and the ability to change the type of result (namely only yes-no and free text).
+
+If you have any immediate feedback or run into problems, feel free to open an issue on GitHub or send me an email: git@ethan-nelson.com
