@@ -77,8 +77,8 @@ class Project(db.Model):
     __tablename__ = 'projects'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
-    instruction = db.Column(db.Text(400))
-    description = db.Column(db.Text(1000))
+    instruction = db.Column(db.String(200))
+    description = db.Column(db.Text)
     hidden = db.Column(db.Boolean)
 
 
@@ -86,7 +86,7 @@ class Task(db.Model):
     __tablename__ = 'tasks'
     id = db.Column(db.Integer, primary_key=True)
     project_id = db.Column(db.Integer, db.ForeignKey('projects.id'))
-    url = db.Column(db.String(120))
+    url = db.Column(db.String(200))
 
 
 class Result(db.Model):
