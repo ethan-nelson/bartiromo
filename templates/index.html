@@ -14,9 +14,11 @@
     <h3>Projects available to work on:</h3>
     <ul>
     {% for project in projects: %}
+    {% if project.hidden == False %}
     <li><a href="/project/{{ project.id }}/">{{ project.name }}</a></li>
     {% if project.description %}
     {{ project.description }}
+    {% endif %}
     {% endif %}
     {% endfor %}
     </ul>

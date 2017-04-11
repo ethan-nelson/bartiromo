@@ -85,6 +85,7 @@ class Project(db.Model):
     name = db.Column(db.String(100))
     instruction = db.Column(db.Text(400))
     description = db.Column(db.Text(1000))
+    hidden = db.Column(db.Boolean)
 
 
 class Task(db.Model):
@@ -317,6 +318,19 @@ def add(project_id):
 
         return redirect(url_for('admin'))
     return render_template('add.html', form=form, project_id=project_id)
+
+
+@app.route('/admin/hide/<int:project_id>/', methods=['GET', 'POST'])
+@login_required
+def hide(project_id):
+    if not current_user.admin:
+        flash('Sorry you do not have permission to do that.')
+        return render_template('index.html')
+    project = Project.query.get(project_id)
+    project.hidden ^= True
+    db.session.add(project)
+    db.session.commit()
+    return redirect(url_for('admin'))
 
 
 @app.route('/admin/')
