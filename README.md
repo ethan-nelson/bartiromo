@@ -1,6 +1,15 @@
 
 This is a web application designed to assist in crowdsourced filtering and identification of features. The current focus is on weather and climate systems, but it can be applied to other situations as well.
 
+Design Structure
+================
+
+The application is built with [Flask](http://flask.pocoo.org), a Python web app module. Overall, the application is designed to be lean (in terms of codebase) and lightweight (in terms of user browser load).
+
+* `app.py` holds the app initialization, database and form class definitions, and the app views (i.e. the queries used to populate pages).
+* `static/` contains design files and eventually Javascript functions that will be used in image click classification projects.
+* `templates/` holds html templates for all pages. The `default.html` file is the base template and that controls most of the branding.
+
 Installation
 ============
 
