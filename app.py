@@ -19,12 +19,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 #   APP HANDLER                                                           #
 ###########################################################################
 app = Flask(__name__)
-try:
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
-    app.config['SECRET_KEY'] = 'itsatrap'
-except:
-    raise Exception('Server settings not set in environmental variable `DATABASE_URL`.')
 
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+app.config['SECRET_KEY'] = 'itsatrap'
+if app.config['SQLALCHEMY_DATABASE_URI'] is None:
+    raise Exception('Server settings not set in environmental variable `DATABASE_URL`.')
 
 ###########################################################################
 #   DATABASE HANDLER                                                      #
