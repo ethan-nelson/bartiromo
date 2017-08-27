@@ -155,6 +155,14 @@ class RegisterForm(FlaskForm):
 class PasswordForm(FlaskForm):
     password = PasswordField(u'New password',
                              validators=[validators.input_required()])
+    repeat_password = PasswordField(u'Confirm new password',
+                                    validators=[validators.input_required()])
+
+    def validate(self):
+        if password != repeat_password:
+            flash('Your new password did not match the confirmation. Please try again.')
+            return False
+        return True
 
 
 class CreateForm(FlaskForm):
