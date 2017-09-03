@@ -44,7 +44,7 @@ $ export DATABASE_URL="mysql://user:pass@host/db"
 Tables and default user credentials must also be created for the app to run. Included in `app.py` is a function that will generate the tables and create a default user of name `admin` and password `micro`. This is called by:
 
 ~~~
-$ env/bin/python -c "import app; app.create_all()"
+$ env/bin/python -c "import app; app.create_database()"
 ~~~
 
 *Make sure you log in to the app and change the admin credentials.*
