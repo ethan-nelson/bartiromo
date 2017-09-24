@@ -57,6 +57,7 @@ class User(db.Model):
     def __init__(self, username, password, email='', admin=False):
         self.username = username
         self.set_password(password)
+        self.email = email
         self.admin = admin
 
     def set_password(self, password):
