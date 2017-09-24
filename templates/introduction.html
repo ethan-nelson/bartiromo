@@ -1,0 +1,13 @@
+{% extends "template.html" %}
+
+  {% block content %}
+    <form method="POST" url="/">
+    <div class="container-fluid">
+    <div class="row">
+    <div class="col-md-8">
+    {{ project['introduction'] }}<br />
+    <button class="btn-success" type="submit">Continue to project</button>
+    </div>
+    </div>
+    </form>
+  {% endblock %}

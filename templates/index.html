@@ -15,7 +15,7 @@
     <ul>
     {% for project in projects: %}
     {% if project.hidden == False %}
-    <li><a href="/project/{{ project.id }}/">{{ project.name }}</a></li>
+    <li><a href="{{ url_for('introduction', project_id=project.id) }}">{{ project.name }}</a></li>
     {% if project.description %}
     {{ project.description }}
     {% endif %}

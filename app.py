@@ -90,6 +90,7 @@ class Project(db.Model):
     name = db.Column(db.String(100))
     instruction = db.Column(db.String(200))
     description = db.Column(db.Text,default='')
+    introduction = db.Column(db.Text,default='')
     hidden = db.Column(db.Boolean,default=False)
 
 
@@ -165,11 +166,14 @@ class PasswordForm(FlaskForm):
 
 
 class CreateForm(FlaskForm):
-    name = TextField(u'Give it a name: ',
+    name = TextField(u'Give it a name :  ',
                      validators=[validators.input_required()])
-    instruction = TextField(u'Write the instructions to show on a task: ',
+    description = TextField(u'Write a short description to show on the homepage : ',
                             validators=[validators.input_required()])
-    description = TextField(u'Write the description to show on the homepage: ')
+    instruction = TextAreaField(u'Write the instructions to show on a task : ',
+                                validators=[validators.input_required()])
+    introduction = TextAreaField(u'Write a detailed introduction that provides training and examples : ',
+                                 validators=[validators.input_required()])
 
     def validate(self):
         project = Project.query.filter_by(name=self.name.data).count()
@@ -272,6 +276,17 @@ def leaderboard():
                            data={'main': [x for x in data]})
 
 
+@app.route('/introduction/<int:project_id>/', methods=['GET', 'POST'])
+@login_required
+def introduction(project_id):
+    if request.method == 'POST':
+        # FIXME: mark user has viewed introduction once
+        return redirect(url_for('project', project_id=project_id))
+
+    project = Project.query.get(project_id)
+
+    return render_template('introduction.html', project=project)
+
 @app.route('/project/<int:project_id>/', methods=['GET', 'POST'])
 @login_required
 def project(project_id):
@@ -309,7 +324,7 @@ def create():
         return render_template('index.html')
     form = CreateForm()
     if form.validate_on_submit():
-        project = Project(name=form.name.data, instruction=form.instruction.data, description=form.description.data)
+        project = Project(name=form.name.data, instruction=form.instruction.data, description=form.description.data, introduction=form.introduction.data)
 
         db.session.add(project)
         db.session.commit()

@@ -6858,13 +6858,6 @@ input,
 textarea {
   color: #2b3e50;
 }
-label,
-.radio label,
-.checkbox label,
-.help-block {
-  font-size: 12px;
-  font-weight: 300;
-}
 .input-addon,
 .input-group-addon {
   color: #ebebeb;
