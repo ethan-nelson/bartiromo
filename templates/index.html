@@ -8,7 +8,7 @@
     <div class="col-md-8">
     <p>Welcome to this crowdsourcing tool!</p>
     {% if current_user.admin %}
-    <p><a href="/admin/">Click here</a> to go to the admin site.</p>
+    <p><a href="{{ url_for('admin') }}">Click here</a> to go to the admin site.</p>
     {% endif %}
     {% if (projects | length) != 0 %}
     <h3>Projects available to work on:</h3>

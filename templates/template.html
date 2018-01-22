@@ -2,20 +2,20 @@
   <html>
     <head>
       <title>Crowdsourcing Tool</title>
-      <link rel="stylesheet" type="text/css" href="/static/theme.css">
+      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/theme.css') }}">
     </head>
     <body>
       <nav class="navbar navbar-default" style="font-size: 24px;">
         <div class="container-fluid">
           <div class="navbar-header">
-            <a href="/">Home</a>{% if project %} | {{ project['name'] }} {% endif %}
+            <a href="{{ url_for('home') }}">Home</a>{% if project %} | {{ project['name'] }} {% endif %}
           </div>
           <div class="pull-right">
-            <a href="/leaderboard/">Leaderboard</a> | 
+            <a href="{{ url_for('leaderboard') }}">Leaderboard</a> | 
             {% if current_user.is_authenticated %}
-            Hi <a href="/user/">{{current_user.username }}</a>! <a href="/logout/">Logout</a>
+            Hi <a href="{{ url_for('user_profile') }}">{{current_user.username }}</a>! <a href="{{ url_for('logout') }}">Logout</a>
             {% else %}
-            <a href="/login/">Login</a> or <a href="/register/">Register</a>
+            <a href="{{ url_for('login') }}">Login</a> or <a href="{{ url_for('register') }}">Register</a>
             {% endif %}
           </div>
         </div>

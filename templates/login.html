@@ -1,7 +1,7 @@
 {% extends "template.html" %}
 
 {% block content %}
-<form method="POST" action="/login/">
+<form method="POST" action="{{ url_for('login') }}">
     <center>
     <b>Login</b><br />
     {{ form.csrf_token }}

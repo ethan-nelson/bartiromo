@@ -332,7 +332,7 @@ def create():
 
         flash('Project created!')
 
-        return redirect('/admin/add/%i/' % (project.id,))
+        return redirect(url_for('add', project_id=project.id))
     return render_template('create.html', form=form)
 
 

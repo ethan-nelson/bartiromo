@@ -1,7 +1,7 @@
 {% extends "template.html" %}
 
 {% block content %}
-<form method="POST" action="/admin/create/">
+<form method="POST" action="{{ url_for('create') }}">
     <center>
     <b>Create a new project</b><br />
     <table>

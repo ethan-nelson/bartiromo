@@ -1,7 +1,7 @@
 {% extends "template.html" %}
 
 {% block content %}
-<form method="POST" action="/admin/add/{{ project_id }}/">
+<form method="POST" action="{{ url_for('add', project_id=project_id) }}">
     <center>
     Add to Project {{ project_id }}<br />
     {{ form.url.label}}<br />{{ form.url(size=30) }}
