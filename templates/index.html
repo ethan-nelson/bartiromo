@@ -3,13 +3,13 @@
   {% block content %}
     <div class="container-fluid">
     <div class="row">
+    {% if current_user.admin %}
+    <center><p><a href="{{ url_for('admin') }}">Click here</a> to go to the admin site.</p></center>
+    {% endif %}
     <div class="col-md-2">
     </div>
     <div class="col-md-8">
     <p>Welcome to this crowdsourcing tool!</p>
-    {% if current_user.admin %}
-    <p><a href="{{ url_for('admin') }}">Click here</a> to go to the admin site.</p>
-    {% endif %}
     {% if (projects | length) != 0 %}
     <h3>Projects available to work on:</h3>
     <ul>
@@ -23,7 +23,7 @@
     {% endfor %}
     </ul>
     {% else %}
-    <p>Currently there are no projects available.</p>
+    <p>Currently there are no projects available. Check back soon!</p>
     {% endif %}
     </div>
     </div>
