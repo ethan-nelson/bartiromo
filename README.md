@@ -22,7 +22,7 @@ The Python portion is now installed.
 
 ## Database
 
-Next you need to tackle setting up a database to store all information for the website. The database can be Mysql, Postgresql, or another kind that is compatible with [SQLAlchemy](http://www.sqlalchemy.org/). Please follow the instructions of the database you want to use for installation.
+Next you need to tackle setting up a database to store all information for the website. The database can be Mysql, Postgresql, or another kind that is compatible with [SQLAlchemy](http://www.sqlalchemy.org/). Please follow the instructions of the database you want to use for installation as they will vary greatly by operating system and database system. For Ubuntu 16.04, this entails `sudo apt-get install postgresql postgresql-server`.
 
 Once it is configured, ensure you have a user and an empty database created. As an example for Postgresql,
 
