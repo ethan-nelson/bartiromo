@@ -61,7 +61,7 @@ class User(db.Model):
         self.admin = admin
 
     def set_password(self, password):
-        self.pw_hash = generate_password_hash(password)
+        self.pw_hash = generate_password_hash(password, method='pbkdf2:sha512:10000',salt_length=128)
 
     def check_password(self, password):
         return check_password_hash(self.pw_hash, password)
@@ -108,6 +108,13 @@ class Result(db.Model):
     task = db.Column(db.Integer, db.ForeignKey('tasks.id'))
     user = db.Column(db.Integer, db.ForeignKey('users.id'))
     result = db.Column(db.Integer)
+
+
+class Introduction(db.Model):
+    __tablename__ = 'introduction_completion'
+    id = db.Column(db.Integer, primary_key=True)
+    user = db.Column(db.Integer, db.ForeignKey('users.id'))
+    project = db.Column(db.Integer, db.ForeignKey('projects.id'))
 
 
 ###########################################################################
@@ -187,6 +194,10 @@ class CreateForm(FlaskForm):
 
 class AddForm(FlaskForm):
     url = TextAreaField(u'Paste a comma, semicolon, or line return delimited list of urls to add.')
+
+
+class IntroductionForm(FlaskForm):
+    submitted = HiddenField()
 
 
 ###########################################################################
@@ -281,7 +292,14 @@ def leaderboard():
 @login_required
 def introduction(project_id):
     if request.method == 'POST':
-        # FIXME: mark user has viewed introduction once
+        #form = IntroductionForm()
+        user = User.query.get(current_user.id)
+        completion = Introduction.query(user=current_user.id, project=project_id).first()
+        if completion is None:
+            completion = Introduction(user=current_user.id, project=project_id)
+            db.session.add(completion)
+            db.session.commit()
+
         return redirect(url_for('project', project_id=project_id))
 
     project = Project.query.get(project_id)
