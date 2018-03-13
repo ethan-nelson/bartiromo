@@ -51,7 +51,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True)
     email = db.Column(db.String(120))
-    pw_hash = db.Column(db.String(100))
+    pw_hash = db.Column(db.String(300))
     admin = db.Column(db.Boolean, default=False)
 
     def __init__(self, username, password, email='', admin=False):
@@ -294,7 +294,7 @@ def introduction(project_id):
     if request.method == 'POST':
         #form = IntroductionForm()
         user = User.query.get(current_user.id)
-        completion = Introduction.query(user=current_user.id, project=project_id).first()
+        completion = Introduction.query.filter(Introduction.user==current_user.id, Introduction.project==project_id).first()
         if completion is None:
             completion = Introduction(user=current_user.id, project=project_id)
             db.session.add(completion)
