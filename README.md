@@ -91,6 +91,6 @@ For deploying to Heroku, a PaaS, a Procfile is included in the repository that u
 
 ## Feedback and Forthcoming Improvements
 
-There's a lot on the docket still to be added to this. First in line are the inclusion of tutorials for projects, customizable image sizes, and the ability to change the type of result (namely only yes-no and free text).
+There's a lot on the docket still to be added to this. First in line are the inclusion of customizable image sizes and the ability to change the type of classification (namely only yes-no and free text).
 
 If you have any immediate feedback or run into problems, feel free to open an issue on GitHub or send me an email: git@ethan-nelson.com
