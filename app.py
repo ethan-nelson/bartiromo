@@ -378,6 +378,7 @@ def add(project_id):
         return render_template('index.html')
     form = AddForm()
     if request.method == 'POST':
+        skipped_files = []; added_files = [];
         data = form.url.data
         data = data.replace(',',' ').replace(';',' ').replace('\r\n',' ').replace('\n\r',' ').replace('\n',' ').replace('\r',' ').split()
 
@@ -386,14 +387,15 @@ def add(project_id):
         for url in data:
             if url not in urls:
                 db.session.add(Task(project_id=project_id,url=url))
+                added_files.append(url)
+            else:
+                skipped_files.append(url)
         db.session.commit()
 
         if len(data) == 0:
             flash('No tasks added.')
-        elif len(data) == 1:
-            flash('Task added!')
         else:
-            flash('Tasks added!')
+            flash('Add process completed. %i files added, %i duplicate files skipped.' % (len(added_files), len(skipped_files)))
 
         return redirect(url_for('admin'))
     return render_template('add.html', form=form, project_id=project_id)
