@@ -11,7 +11,7 @@
     <h3>Current Projects:</h3>
     <ul>
     {% for project in projects: %}
-    <li><a href="{{ url_for('results', project_id=project.id) }}">{{ project.name }}</a> | <a href="{{ url_for('add', project_id=project.id) }}/">Add images</a> | <a href="{{ url_for('hide', project_id=project.id) }}/">{% if project.hidden %}Show{% else%}Hide{% endif %}</a></li>
+    <li><a href="{{ url_for('results', project_id=project.id) }}">{{ project.name }}</a> | <a href="{{ url_for('add', project_id=project.id) }}/">Add external image urls</a> | <a href="{{ url_for('upload_photo', project_id=project.id) }}">Upload images</a> | <a href="{{ url_for('hide', project_id=project.id) }}/">{% if project.hidden %}Show{% else%}Hide{% endif %}</a></li>
     {% endfor %}
     </ul>
     {% else %}

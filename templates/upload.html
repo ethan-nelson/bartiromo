@@ -1,0 +1,13 @@
+{% extends "template.html" %}
+
+{% block content %}
+<form method="POST" action="{{ url_for('upload_photo', project_id=project_id) }}" enctype="multipart/form-data">
+    <center>
+    Upload to Project {{ project_id }}<br />
+    <b><i>Important note: Any uploaded files whose names match preexisting tasks will be discarded; make them unique so the results make sense!</i></b><br />
+    <i>Please be patient; the speed here depends on your internet and the server. Consider breaking up uploads into batches.</i><br />
+    {{ form.photos.label }}<br />{{ form.photos(multiple="") }}
+    <input type="submit" value="Upload">
+    </center>
+</form>
+{% endblock %}

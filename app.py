@@ -2,6 +2,7 @@ from flask import Flask
 from flask import *
 from flask.ext.login import *
 from flask.ext.sqlalchemy import SQLAlchemy
+from flask.ext.uploads import configure_uploads, IMAGES, UploadSet
 from flask_wtf import FlaskForm
 from wtforms import *
 import os
@@ -11,6 +12,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # - Flask guts
 # - Database guts
 # - Login guts
+# - Upload guts
 # - Database definitions
 # - Form definitions
 # - App views
@@ -42,6 +44,16 @@ login_manager.init_app(app)
 def load_user(user_id):
     return db.session.query(User).get(user_id)
 
+###########################################################################
+#   UPLOAD HANDLER                                                        #
+###########################################################################
+# Important note: changing this config after uploading some files will
+#  require manually changing the existing task definitions to the new URL
+#  (or adding a custom app route of the old destination pointing to the new)
+app.config['UPLOADS_DEFAULT_DEST'] = 'uploads/'
+app.config['UPLOADS_DIRECTORY'] = 'photos'
+photo_uploads = UploadSet(app.config['UPLOADS_DIRECTORY'], IMAGES)
+configure_uploads(app, photo_uploads)
 
 ###########################################################################
 #   DATABASE CLASSES                                                      #
@@ -194,6 +206,10 @@ class CreateForm(FlaskForm):
 
 class AddForm(FlaskForm):
     url = TextAreaField(u'Paste a comma, semicolon, or line return delimited list of urls to add.')
+
+
+class UploadForm(FlaskForm):
+    photos = FileField(u'Select files to upload.')
 
 
 class IntroductionForm(FlaskForm):
@@ -381,6 +397,57 @@ def add(project_id):
 
         return redirect(url_for('admin'))
     return render_template('add.html', form=form, project_id=project_id)
+
+
+@app.route('/admin/photo/upload/<int:project_id>', methods=['GET', 'POST'])
+@login_required
+def upload_photo(project_id):
+    form = UploadForm()
+    if not current_user.admin:
+        flash('Sorry, you do not have permission to do that.')
+        return render_template('index.html')
+    if request.method == 'POST':
+        skipped_files = []; uploaded_files = []; added_files = []
+        if len(request.files.getlist('photos')) == 1 and request.files.getlist('photos')[0].filename == '':
+            flash('No files selected to upload.')
+            return redirect(url_for('admin'))
+        try:
+            existing_files = [x[0] for x in db.session.query(Task.url).filter(project_id==project_id).all()]
+            for upload_file in request.files.getlist('photos'):
+                if '/%s%s/%i/%s' % (app.config['UPLOADS_DEFAULT_DEST'], app.config['UPLOADS_DIRECTORY'], project_id, upload_file.filename) not in existing_files:
+                    filename = photo_uploads.save(upload_file, folder='%s/' % (str(project_id)))
+                    uploaded_files.append(filename)
+                    db.session.add(Task(project_id=project_id,url='/%s%s/%s' % (app.config['UPLOADS_DEFAULT_DEST'], app.config['UPLOADS_DIRECTORY'], filename)))
+                    added_files.append(filename)
+                else:
+                    skipped_files.append(upload_file)
+            db.session.commit()
+            flash('Upload process completed. %i files uploaded, %i duplicate files skipped.' % (len(added_files), len(skipped_files)))
+        except Exception as e:
+            flash('Tasks unable to be added.')
+        return redirect(url_for('admin'))
+
+    return render_template('upload.html', project_id=project_id, form=form)
+
+
+@app.route('/admin/photo/delete/<int:project_id>/<filename>', methods=['POST'])
+@login_required
+def delete_photo(project_id, filename):
+    if not current_user.admin:
+        flash('Sorry, you do not have permission to do that.')
+        return render_template('index.html')
+    try:
+        target = os.path.join(app.config['UPLOADS_DEFAULT_DEST'], '%s/%s' % (str(project_id), filename))
+        os.remove(target)
+    except:
+        flash('Could not remove file %s' % (filename,))
+    return url_for('results', project_id=project_id)
+
+
+@app.route('/%s%s/<int:project_id>/<filename>' % (app.config['UPLOADS_DEFAULT_DEST'], app.config['UPLOADS_DIRECTORY']), methods=['GET'])
+@login_required
+def serve_photo(project_id, filename):
+    return send_from_directory('%s%s' % (app.config['UPLOADS_DEFAULT_DEST'], app.config['UPLOADS_DIRECTORY']), '%s/%s' % (str(project_id), filename))
 
 
 @app.route('/admin/hide/<int:project_id>/', methods=['GET', 'POST'])
