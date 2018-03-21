@@ -198,6 +198,8 @@ class CreateForm(FlaskForm):
                                 validators=[validators.input_required()])
     introduction = TextAreaField(u'Write a detailed introduction that provides training and examples : ',
                                  validators=[validators.input_required()])
+    classification_maximum = IntegerField(u'How many classifications should a task require before it is complete? ',
+                                          validators=[validators.input_required()])
 
     def validate(self):
         project = Project.query.filter_by(name=self.name.data).count()
@@ -334,12 +336,20 @@ def project(project_id):
 
         result = Result(task=form['url'],
                         result=form['vote'],
+                        project=project_id,
                         user=current_user.id)
         db.session.add(result)
         db.session.commit()
 
     project = Project.query.get(project_id)
-    data = Task.query.filter_by(project_id=project_id).order_by(db.func.random()).first()
+
+    tasks_user_completed = Result.query.filter(db.and_(Result.user==current_user.id, Result.project==project.id)).with_entities(Result.task).all()
+    tasks_user_completed = [x[0] for x in tasks_user_completed]
+
+    counts = Result.query.filter(Result.project==project_id).group_by(Result.task).with_entities(Result.task, db.func.count()).all()
+    tasks_done = [x[0] for x in counts if x[1] >= project.classification_maximum]
+
+    data = Task.query.filter(Task.project_id==project_id).filter(Task.id.notin_(tasks_user_completed)).filter(Task.id.notin_(tasks_done)).order_by(db.func.random()).first()
 
     return render_template('project.html', data=data, project=project)
 
@@ -363,7 +373,7 @@ def create():
         return render_template('index.html')
     form = CreateForm()
     if form.validate_on_submit():
-        project = Project(name=form.name.data, instruction=form.instruction.data, description=form.description.data, introduction=form.introduction.data)
+        project = Project(name=form.name.data, instruction=form.instruction.data, description=form.description.data, introduction=form.introduction.data, classification_maximum=form.classification_maximum.data)
 
         db.session.add(project)
         db.session.commit()
