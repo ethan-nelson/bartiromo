@@ -5,6 +5,7 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.uploads import configure_uploads, IMAGES, UploadSet
 from flask_wtf import FlaskForm
 from wtforms import *
+import datetime
 import os
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -100,33 +101,36 @@ class User(db.Model):
 class Project(db.Model):
     __tablename__ = 'projects'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100))
+    name = db.Column(db.String(100), nullable=False)
     instruction = db.Column(db.String(200))
-    description = db.Column(db.Text,default='')
-    introduction = db.Column(db.Text,default='')
-    hidden = db.Column(db.Boolean,default=False)
+    description = db.Column(db.Text, default='')
+    introduction = db.Column(db.Text, default='')
+    hidden = db.Column(db.Boolean, default=False, nullable=False)
+    classification_maximum = db.Column(db.Integer)
 
 
 class Task(db.Model):
     __tablename__ = 'tasks'
     id = db.Column(db.Integer, primary_key=True)
-    project_id = db.Column(db.Integer, db.ForeignKey('projects.id'))
-    url = db.Column(db.String(200))
+    project_id = db.Column(db.Integer, db.ForeignKey('projects.id'), nullable=False)
+    url = db.Column(db.String(200), nullable=False)
 
 
 class Result(db.Model):
     __tablename__ = 'results'
     id = db.Column(db.Integer, primary_key=True)
-    task = db.Column(db.Integer, db.ForeignKey('tasks.id'))
-    user = db.Column(db.Integer, db.ForeignKey('users.id'))
-    result = db.Column(db.Integer)
+    timestamp = db.Column(db.DateTime, server_default=db.func.now())
+    project = db.Column(db.Integer, db.ForeignKey('projects.id'), nullable=False)
+    task = db.Column(db.Integer, db.ForeignKey('tasks.id'), nullable=False)
+    user = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    result = db.Column(db.Integer, nullable=False)
 
 
 class Introduction(db.Model):
     __tablename__ = 'introduction_completion'
     id = db.Column(db.Integer, primary_key=True)
-    user = db.Column(db.Integer, db.ForeignKey('users.id'))
-    project = db.Column(db.Integer, db.ForeignKey('projects.id'))
+    user = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    project = db.Column(db.Integer, db.ForeignKey('projects.id'), nullable=False)
 
 
 ###########################################################################
