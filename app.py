@@ -361,7 +361,7 @@ def results(project_id):
         flash('Sorry, you do not have permission to do that.')
         return render_template('index.html')
     data = {}
-    data['data'] = db.session.query(Task.url, db.func.count(Result.id)).join(Result,Task.project_id==project_id).group_by(Task.url).all()
+    data['data'] = db.session.query(Task).join(Result,Task.project_id==project_id).group_by(Task.url).with_entities(Task.url, db.func.count()).all()
     return render_template('results.html', data=data)
 
 
